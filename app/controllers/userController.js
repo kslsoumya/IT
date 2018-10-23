@@ -291,7 +291,7 @@ let sendResetLink = (req, res) => {
             } else {
                 logger.info('User Found', 'User Controller:find User()', 10)
                 let welcomeText = `Hi ${req.params.userName} . please click on the following link to reset you password \n
-                http://localhost:4200/resetPwd/${userDetails.userId}?userName=${userDetails.userName}`
+                http://issuetracker.themeanstackpro.com/resetPwd/${userDetails.userId}?userName=${userDetails.userName}`
                     ;
                 var mailOptions = {
                     from: '"IssueTracker" <dprivate00@gmail.com>',
