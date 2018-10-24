@@ -1,0 +1,30 @@
+nav {
+    background-color: #2b6fb4
+}
+
+.fr-toolbar {
+border-top:5px solid #3986d8!important;
+}
+h3 {
+    font-style: italic;
+    font-weight: bold;
+}
+li {
+    padding: 2vh;
+    cursor: pointer;
+    /* text-align: center; */
+}
+
+/* h3,i {
+    display: inline;
+} */
+
+input[type="text"]:focus,
+textarea:focus,
+select:focus,
+.description :focus
+ {
+border-color: rgba(22, 60, 230, 0.603);
+box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(22, 60, 230, 0.403);
+outline: 0 none;
+}

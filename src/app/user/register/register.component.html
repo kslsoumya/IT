@@ -1,0 +1,102 @@
+
+
+
+<ng-template #notifyModal let-close="close">
+<div class="modal-header">
+  <h5 class="modal-title mx-auto"><strong>Warning</strong></h5>
+  <button type="button" class="close" (click)="close()">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<div class="modal-body">
+  <div class ="row">
+  <div class ="col">
+    <h6>{{registerResponse.message}}</h6>
+      <small>*Email should be valid.</small><br/>
+      <small>*Password should have Minimum 8 characters which contain only characters,numeric digits, 
+        underscore and first character must be a letter.</small><br/>
+        <small>*MobileNumber should be valid(10 digits).</small><br/>
+</div>
+</div>
+</div>
+<div class="modal-footer">
+  <button type="button"  ngbAutofocus class="btn btn-warning"  (click)="close()">OK</button>
+</div>
+</ng-template>
+
+<ngx-spinner
+  bdColor="rgba(51,51,51,0.8)"
+  size="medium"
+  color="#fff"
+  type="ball-scale-multiple">
+ <p style="font-size: 20px; color: white">Registering...</p>
+</ngx-spinner>
+
+
+
+<div class="container">
+  <div class="row">
+    <div class ="col-12 col-md-6">
+        <img   class="img-fluid"  src="assets/img1.png" >
+    </div>
+     <div class ="col-md-1"></div> 
+     <div class=" col-12 col-md-4 registerForm  mx-auto shadow bg-white rounded" style ="text-align: center">
+      <h3 class = "mb-4">Register Here</h3> 
+       
+      <form  [formGroup]="signUpForm"   (ngSubmit)="registerUser()">
+          <div class="input-group mb-4">
+              <div class="input-group-prepend">
+                <div class="input-group-text"><i class="fa fa-envelope" aria-hidden="true"></i>
+                </div>
+              </div>
+              <input type="text" class="form-control"  formControlName="emailId" 
+               placeholder="Email Id" required>
+            </div>
+        <div class="input-group mb-4">
+          <div class="input-group-prepend">
+            <div class="input-group-text"><i class="fa fa-user" aria-hidden="true"></i>&nbsp;
+            </div>
+          </div>
+          <input type="text" class="form-control"  formControlName="userName"  
+            placeholder="Username" required>
+        </div>
+      
+        <div class="input-group mb-4">
+            <div class="input-group-prepend">
+              <div class="input-group-text">
+                  <!-- <i class="fa fa-lock" aria-hidden="true"></i>&nbsp; -->
+                <mat-icon matSuffix (click)="hide = !hide">{{hide ? 'visibility' : 'visibility_off'}}</mat-icon> 
+               </div>
+            </div>
+            <input class="form-control" 
+            [type]="hide ? 'password' : 'text'"   formControlName="password"  
+             
+           placeholder="Password"  required>           
+          </div>
+                       
+          <!-- <small id="pwdHelp" class="form-text text-muted">Password should have minimum 6 characters</small> -->
+          
+
+          <div class="input-group mb-4">
+            <div class="input-group-prepend">
+              <div class="input-group-text"><i class="fa fa-calendar" aria-hidden="true"></i>
+              </div>
+            </div>
+            <input type="date" class="form-control" formControlName="dob" 
+              placeholder="Date Of Birth" required>
+          </div>
+          <div class="input-group mb-4">
+            <div class="input-group-prepend">
+              <div class="input-group-text"><i class="fa fa-mobile fa-lg" aria-hidden="true"></i>&nbsp;
+              </div>
+            </div>
+            <input type="tel" class="form-control" formControlName="mobile" 
+             placeholder="Mobile" required>
+          </div>
+          <button class ="btn btn-block btn-success mb-2" type="submit" [disabled]='!signUpForm.valid'>Register</button>
+          <small>Already Registered?<a routerLink ='/login'><strong>Login Here</strong></a></small>
+      </form> 
+      
+             </div>  
+          </div>
+        </div>

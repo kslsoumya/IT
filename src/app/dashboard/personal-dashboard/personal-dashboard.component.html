@@ -1,0 +1,107 @@
+<nav class="navbar navbar-expand-lg navbar-dark ">
+  <a class="navbar-brand" routerLink='/dashboard/{{userId}}'>Issue Tracker</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup"
+    aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+    <div class="navbar-nav ml-auto">
+        <a class="nav-item nav-link " routerLink='/dashboard/{{userId}}'><b style='font-style: italic'>Hi, {{userName}} </b><span class="sr-only">(current)</span></a>
+
+      <a class="nav-item nav-link active" routerLink='/dashboard/{{userId}}'>DashBoard <span class="sr-only">(current)</span></a>
+      <a class="nav-item nav-link " routerLink='/issue/{{userId}}'>Create <span class="sr-only">(current)</span></a>
+      <a class="nav-item nav-link" routerLink='/home'><i class="fa fa-sign-out" style="color:white;" aria-hidden="true" title='LogOut'></i>
+      </a>
+    </div>
+  </div>
+</nav>
+<br />
+
+
+
+
+
+<div class="container" style="text-align: center">
+  <div class="row mt-2 ">
+    <div class="col-md-4   mx-auto">
+      <h3>Your Issues</h3>
+    </div>
+
+  </div>
+  <div class="row mt-4 ">
+    <div class=" col-12 col-lg-4  mx-auto">
+      <div class="input-group mb-3">
+        <input type="text" class="form-control" placeholder ='Search Any Issue'  [(ngModel)] ='searchText'>
+        <div class="input-group-append">
+          <span class="input-group-text">
+            <i class="fa fa-search" aria-hidden="true" (click) ='searchAnIssue()'  title ='Search By Title' style='cursor: pointer;'></i>
+          </span>
+        </div>
+      </div>
+    </div>
+    <div class=" col-8 col-lg-4  mx-auto">
+      <input *ngIf="config.filtering" placeholder="Filter Issues" [ngTableFiltering]="config.filtering" class="form-control"
+        (tableChanged)="onChangeTable(config)" />
+    </div>
+    <div class="col-4 col-lg-2  mx-auto">
+
+      <button class="btn btn-success" (click)="createIssue()"  style='cursor:pointer' title ='New Issue'>Create</button>
+    </div>
+  </div>
+
+  <div class="row mt-4 ">
+    <div class="col-md-4  mx-auto" style ='display: inline-flex'>
+      <!-- <div class="input-group mb-3">
+        <input type="text" class="form-control" placeholder ='Search Any Issue'  [(ngModel)] ='searchText'>
+        <div class="input-group-append">
+          <span class="input-group-text">
+            <i class="fa fa-search" aria-hidden="true" (click) ='searchAnIssue()' style='cursor: pointer;'></i>
+          </span>
+        </div>
+      </div> -->
+      <!-- <input type="text"  placeholder ='search Issues'  (ngModelChange) ='searchAnIssue($event)' >&nbsp;&nbsp; -->
+      <!-- <button class="btn btn-success" (click)="searchIssue()" title='New Issue'>Create</button> -->
+    </div>
+  </div>
+<br />
+<div class="row">
+  <div class="col-12 mx-auto">
+    <ng-table [config]="config" (tableChanged)="onChangeTable(config)"
+     (cellClicked)="onCellClick($event)" [rows]="rows"
+      [columns]="columns">
+    </ng-table>
+  </div>
+
+</div>
+
+<div class="row">
+  <div class="col-md-4">
+    <pagination *ngIf="config.paging&&length>5" class="pagination-sm" [(ngModel)]="page" [totalItems]="length"
+      [itemsPerPage]="itemsPerPage" [maxSize]="maxSize" [boundaryLinks]="true" [rotate]="false" (pageChanged)="onChangeTable(config, $event)"
+      (numPages)="numPages = $event">
+    </pagination>
+    <pre *ngIf="config.paging&&length>5" class="card card-block card-header">Page: {{page}} / {{numPages}}</pre>
+  </div>
+</div>
+</div>
+
+
+<ng-template #notifyModal let-close="close">
+  <div class="modal-header">
+    <h5 class="modal-title mx-auto"><strong>Notification</strong></h5>
+    <button type="button" class="close" (click)="close()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class ="row">
+    <div class ="col">
+      <h6 >{{notification.msg}}</h6>
+  </div>
+  
+  </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button"  ngbAutofocus class="btn btn-warning"  (click)="openIssue(notification.issueId);close()">Open</button>
+  </div>
+  </ng-template>

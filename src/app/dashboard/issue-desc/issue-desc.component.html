@@ -1,0 +1,163 @@
+<nav class="navbar navbar-expand-lg navbar-dark ">
+    <a class="navbar-brand" routerLink='/issue/{{userId}}'>Issue Tracker</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+      <div class="navbar-nav ml-auto">
+          <a class="nav-item nav-link " routerLink='/issue/{{userId}}'><b style='font-style: italic'>Hi, {{userName}} </b><span class="sr-only">(current)</span></a>
+
+        <a class="nav-item nav-link" routerLink ='/dashboard/{{userId}}'>Dashboard <span class="sr-only">(current)</span></a>
+        <a class="nav-item nav-link active"  >Create <span class="sr-only">(current)</span></a>
+        <a class="nav-item nav-link" routerLink = '/home'><i class="fa fa-sign-out" style="color:white"  title="Logout" aria-hidden="true"></i>
+        </a>
+      </div>
+    </div>
+  </nav>
+<br/>
+
+<!-- <ngx-spinner
+  bdColor="rgba(51,51,51,0.8)"
+  size="medium"
+  color="#fff"
+  type="ball-scale-multiple">
+ <p style="font-size: 20px; color: white">Creating an Issue...</p>
+</ngx-spinner> -->
+
+<ng-template #watcherModal let-close="close">
+  <div class="modal-header">
+    <h5 class="modal-title mx-auto"><strong>People Watching</strong></h5>
+    <button type="button" class="close" (click)="close()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class ="row">
+    <div class ="col"  *ngIf = 'watchers.length!==0'>
+      <h6  *ngFor= 'let p of watchers;let i =index'>{{i+1}}. &nbsp; &nbsp;{{p}}</h6>
+  </div>
+  <div class ="col"  *ngIf = 'watchers.length===0'>
+    <h6>No one is watching</h6>
+</div>
+  </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button"  ngbAutofocus class="btn btn-warning"  (click)="close()">OK</button>
+  </div>
+  </ng-template>
+
+
+  <ng-template #notifyModal let-close="close">
+    <div class="modal-header">
+      <h5 class="modal-title mx-auto"><strong>Notification</strong></h5>
+      <button type="button" class="close" (click)="close()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class ="row">
+      <div class ="col">
+        <h6>{{notification.msg}}</h6>
+    </div>
+    
+    </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button"  ngbAutofocus class="btn btn-warning"  (click)="openIssue(notification.issueId);close()">Open</button>
+    </div>
+    </ng-template>
+
+
+<div class ="container" style ="text-align: center">
+  <div class = "row" >
+    <div class= "col  mx-auto">
+    <h3 *ngIf ='isCreate&&!isEdit'  style ='color: #14afa0;'>Report a Bug</h3>
+    <h3 *ngIf ='isEdit'>Edit Details</h3>
+    <h3 *ngIf ='isView'>Details</h3>
+    
+  </div>
+  <div class="btn-group open"  *ngIf ='isView'>
+      <button class="btn btn-warning" ><i class="fa fa-user fa-fw"></i> Actions</button>
+      <button class="btn btn-warning dropdown-toggle" data-toggle="dropdown">
+      </button>
+      <ul class="dropdown-menu  dropdown-menu-right">
+        <li  (click) = "editIssue()"><i class="fa fa-pencil fa-fw" ></i> Edit</li>
+        <li (click) = "deleteIssue()" ><i class="fa fa-trash-o fa-fw" ></i> Delete</li>
+        <li (click) = "watchIssue()" *ngIf ='isWatch' ><i class="fa fa-eye fa-fw" ></i> Watch</li>
+        <li (click) = "unWatchIssue()"  *ngIf ='isUnWatch'><i class="fa fa-eye-slash fa-fw" ></i> UnWatch</li>
+        <li (click) = "getWatchers()"><i class="fa fa-users fa-fw" ></i> Watchers</li>
+      </ul>
+    </div>
+
+   </div> 
+    <br/>
+    <div class ="row mx-auto">
+      <div class="col-12 mx-auto">
+    <form  class="newIssue"   #issueForm = 'ngForm'>
+        <div class="input-group mb-4 row" >
+            <label class="col-sm-2 col-form-label">Title*</label>
+            <div class="col-sm-10">
+              <input type="text" class="form-control"   *ngIf = 'isCreate' [(ngModel)] = 'title' (ngModelChange) = 'isValueChanged = true'  name="issueTitle" placeholder="Title" required>
+              <input type="text" class="form-control"   *ngIf = 'isView' [(ngModel)] = 'title'  name="issueTitle"  readonly>
+            </div>
+          </div>
+        <div class="input-group mb-4 row">
+          <label for="exampleFormControlSelect1"  class="col-sm-2 col-form-label">Assign To*</label>
+          <div class="col-sm-10">
+          <select class="form-control  custom-select"  name="assignTo"  (ngModelChange) = 'isValueChanged = true' *ngIf = 'isCreate' [(ngModel)] = 'assignee'  required>
+              <option selected>Choose here</option>
+            <option *ngFor = 'let user of userList' >
+              {{user.userName}}
+            </option>
+          </select>
+          <input type="text" class="form-control"  *ngIf = 'isView'  [(ngModel)] = 'assignee' name="assignTo"  readonly>
+          </div>
+        </div>
+
+        <div class="input-group mb-4 row">
+            <label   class="col-sm-2 col-form-label">Status*</label>
+             <div class="col-sm-10">
+          <span *ngFor = 'let val of checkboxValues;let i= index'>
+            <div class="custom-control custom-checkbox custom-control-inline"  *ngIf = 'isCreate'
+             >
+                <input type="checkbox" id= "check{{i+1}}"  class="custom-control-input"  name ="checkBox{{i+1}}"
+                [(ngModel)] = "val.checked" (click) = 'updateSelection(val.title)' 
+                (ngModelChange) = 'isValueChanged = true' >
+                <label class="custom-control-label" for="check{{i+1}}">{{val.title}}</label>
+              </div>
+            </span>
+          <input type="text" class="form-control"  *ngIf = 'isView'  [(ngModel)] = 'issueStatus' name="stat"  readonly>
+          </div>
+        </div>
+        
+        <div class="input-group mb-4 row">
+          <label   class="col-sm-2 col-form-label">Description</label>
+          <!-- <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea> -->
+           <div class="col-sm-10">
+          
+          <div [froalaEditor]   *ngIf = 'isCreate'    (ngModelChange) = 'isValueChanged = true' name="desc" [(ngModel)] = 'description' ></div>
+          <div [froalaEditor]= 'options' *ngIf = 'isView'   name="desc" [(ngModel)] = 'description' ></div>
+          <!-- <input class="form-control  formtext"  type ="text" *ngIf = 'isView'  [(ngModel)] = 'description'  name="desc" readonly > -->
+        </div>
+
+        </div> 
+        <div class="input-group mb-4 row">
+            <label  class="col-sm-2 col-form-label">Comments</label>
+            <div class="col-sm-10">
+                <textarea class="form-control" *ngIf = 'isCreate'   (ngModelChange) = 'isValueChanged = true' [(ngModel)] = 'comments' name="comment" 
+                rows="2" 
+                placeholder="Add a comment"></textarea>
+                <input type="text" class="form-control"  *ngIf = 'isView'  [(ngModel)] = 'comments' name="comment"  readonly>
+          </div>
+  
+          </div>
+          <button class ="btn btn-outline-info"  *ngIf = 'isCreate&&!isEdit' (click) ='createIssue()' [disabled] = '!issueForm.form.valid' >Post</button>
+          &nbsp;&nbsp;<button class ="btn btn-outline-danger"  *ngIf = 'isCreate&&!isEdit' (click) ='cancelCreate()'>Cancel</button>
+          <button class ="btn btn-outline-warning"  *ngIf = 'isEdit'  [disabled] = '!issueForm.form.valid' (click) = 'editIssue()' >Edit</button>
+         &nbsp;&nbsp; <button class ="btn btn-outline-danger"   *ngIf = 'isEdit' (click) = 'cancelEdit()'  >Cancel</button>
+      </form>
+
+     
+    </div>
+    </div>
+      </div>
